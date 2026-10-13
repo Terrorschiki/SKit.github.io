@@ -5,6 +5,30 @@ A static, multilingual product-quotation website built from three supplier price
 
 **Live site:** https://terrorschiki.github.io/SKit.github.io/
 
+## Repository and hosting
+
+This repository belongs to the **`Terrorschiki` organization** (not a personal account),
+which owns several repositories:
+
+| Repository | Purpose |
+| --- | --- |
+| `Terrorschiki.github.io` | The organization landing page (Jekyll blog), served at the domain root |
+| `SKit.github.io` | **This project** — served at `https://terrorschiki.github.io/SKit.github.io/` |
+| `blog_template`, `RESUME_TEMPLATE`, `Terrorschiki` | Other templates and private work |
+
+Two hosting consequences are worth remembering:
+
+- **The URL path is the repository name.** GitHub Pages serves a project repository from
+  its **repository root**, so this site's `index.html` must sit at the root — the
+  `/SKit.github.io/` segment comes from the repository name, not from a folder. Only a
+  repository literally named `Terrorschiki.github.io` serves the bare domain.
+- **`/assets/...` at the domain root belongs to the blog**, not to this site. These assets
+  live under `/SKit.github.io/assets/...`, so the two sites never collide. A probe of
+  `https://terrorschiki.github.io/assets/css/style.css` returns the blog theme, not ours.
+
+Deployment runs through GitHub Actions (`.github/workflows/pages.yml`), which must stay at
+the repository root — GitHub ignores workflow files placed anywhere else.
+
 ---
 
 ## What is in this repository
