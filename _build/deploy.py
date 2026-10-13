@@ -36,9 +36,33 @@ def copy_tree(src, dst):
             shutil.copy2(os.path.join(root, f), os.path.join(target, f))
 
 
+def prune_orphan_images(catalog):
+    """Delete product images that no catalogue entry references any more
+    (leftovers from earlier builds that used different id schemes)."""
+    img_dir = os.path.join(SITE, "assets", "products")
+    expected = set()
+    for p in catalog["products"]:
+        for tag in ("thumb", "card", "full"):
+            expected.add(f"{p['id']}-{tag}.jpg")
+    for k in ("l", "p", "s"):
+        expected.add(f"{k}-hero.jpg")
+    removed = 0
+    for f in os.listdir(img_dir):
+        if f.endswith(".jpg") and f not in expected:
+            os.remove(os.path.join(img_dir, f))
+            removed += 1
+    return removed
+
+
 def main():
     if not os.path.isdir(SITE):
         sys.exit("site/ not found — run the builders first")
+    cat_path = os.path.join(SITE, "data", "catalog.json")
+    cat = json.load(io.open(cat_path, encoding="utf-8"))
+    pruned = prune_orphan_images(cat)
+    if pruned:
+        print(f"pruned {pruned} orphaned product image(s)")
+
     if os.path.isdir(DIST):
         shutil.rmtree(DIST)
     os.makedirs(DIST, exist_ok=True)
@@ -48,6 +72,11 @@ def main():
     # skip Jekyll processing entirely.
     with io.open(os.path.join(DIST, ".nojekyll"), "w") as fh:
         fh.write("")
+
+    # repository README (kept in site/ so a rebuild does not lose it)
+    readme = os.path.join(SITE, "README.md")
+    if os.path.exists(readme):
+        shutil.copy2(readme, os.path.join(DIST, "README.md"))
 
     files = sum(len(f) for _, _, f in os.walk(DIST))
     size = sum(os.path.getsize(os.path.join(r, f))

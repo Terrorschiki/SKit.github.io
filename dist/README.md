@@ -22,14 +22,14 @@ A static, multilingual product-quotation website built from three supplier price
 | `assets/js/product.js` | Product detail rendering and related items |
 | `assets/data/catalog.json` | The full extracted catalogue (445 items) |
 | `assets/data/i18n/*.json` | UI dictionaries: English, Spanish, French, Chinese |
-| `assets/products/*.jpg` | 1,335 optimised product images (thumb / card / full + banners) |
+| `assets/products/*.jpg` | 1,329 optimised product images (thumb / card / full + banners) |
 | `downloads/` | The original supplier price lists (PDF + Excel) |
 | `sitemap.xml`, `robots.txt`, `.nojekyll` | SEO and GitHub Pages configuration |
 | `_build/` | The Python build scripts that generated everything above |
 
 ## The three quotations
 
-Each supplier price list became its own programme, columns mapped as follows:
+Each supplier price list became its own programme:
 
 | Source workbook | Programme | Code source | Name source | Items |
 | --- | --- | --- | --- | --- |
@@ -71,6 +71,7 @@ python _build/deploy.py          # copy site/ to dist/ and verify image/page cov
 
 `build_catalog.py` skips images that already exist; pass `--force` to regenerate them,
 or `--limit=N` to process only the first N images per programme.
+`deploy.py` also prunes product images that no catalogue entry references any more.
 
 ## Editing content
 
@@ -95,5 +96,7 @@ or `--limit=N` to process only the first N images per programme.
   the quotation drawer and every product page.
 - Three items in the L-handle price list (`L64`, `L66`, `L99`) have no photograph in
   the source workbook; those pages show a branded "photo on request" placeholder.
+- Carton data (quantity, gross weight, CBM) is present for 442 of the 445 items; the
+  three without it are the same items that have no photograph.
 - The Excel workbooks embedded in `downloads/` are the original supplier files, kept
-  for offline costing and forwarded to buyers on request.
+  for offline costing and forwarding to buyers on request.
