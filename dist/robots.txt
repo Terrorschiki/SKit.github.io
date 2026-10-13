@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://terrorschiki.github.io/SKit.github.io/sitemap.xml
