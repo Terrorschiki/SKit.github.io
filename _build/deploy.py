@@ -20,7 +20,8 @@ SITE = os.path.join(ROOT, "site")     # staging tree
 
 # Directories published verbatim from site/ into the repository root.
 # (_build/ is tooling, site/ is staging, .git/ is the repository itself.)
-PUBLISH_DIRS = ("assets", "collections", "products", "downloads")
+# data/ holds catalog.json and the i18n dictionaries the front-end fetches.
+PUBLISH_DIRS = ("assets", "data", "collections", "products", "downloads")
 
 # Individual files published at the repository root.
 PUBLISH_FILES = (
