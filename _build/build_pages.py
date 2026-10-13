@@ -246,6 +246,29 @@ def canonical(rel_path):
     return "https://terrorschiki.github.io/SKit.github.io/" + p
 
 
+# ------------------------------------------------------- studio cover photos
+# 网站封面图片/ -> assets/img/cover/pNN-{960,1440,1920,2560}.{jpg,webp}
+#   p01 wood-grain L-handle set    p02 silicone + steel set   p03 silicone spatulas
+#   p04 wood L-handle set          p05 silicone + steel set   p06 wood-handle silicone
+#   p07 box graters                p08 stainless P-handle set p09 pizza & pastry tools
+#   p10 turners and spatulas       p11 peelers and zesters    p12 whisks and strainers
+COVER_BY_SET = {"L": "p04", "P": "p08", "S": "p06"}
+
+
+def cover_picture(stem, rel, alt, cls="", sizes="100vw", eager=False,
+                  width=1920, height=1080):
+    """Responsive <picture> for a studio cover photo (WebP with JPEG fallback)."""
+    srcset = ", ".join(f"{rel}assets/img/cover/{stem}-{w}.webp"
+                       for w in (960, 1440, 1920, 2560))
+    load = ' fetchpriority="high"' if eager else ' loading="lazy"'
+    return (f'<picture>'
+            f'<source type="image/webp" srcset="{srcset}" sizes="{sizes}">'
+            f'<img class="{cls}" src="{rel}assets/img/cover/{stem}-1440.jpg" '
+            f'alt="{html.escape(alt)}" width="{width}" height="{height}" '
+            f'decoding="async"{load}>'
+            f'</picture>')
+
+
 # ------------------------------------------------------------ price helpers
 def price_span(p, rel):
     return (f'<span data-price-usd="{p["price"]}">'
@@ -353,12 +376,14 @@ def build_home():
       <div class="hero-visual">
         <div class="float-chip chip-a"><span class="dot"></span><span data-i18n="hero.badge1">Factory direct pricing</span></div>
         <div class="float-chip chip-b"><span class="dot"></span>{total} <span data-i18n="hero.products">item lines</span></div>
-        <div class="hero-card">
-          <img src="{SETS['S']['hero']}.jpg" alt="Silicone and nylon kitchen tools with SKit packaging" width="1400" height="700">
-          <div class="hero-strip">
+        <figure class="hero-photo">
+          {cover_picture('p06', '', 'SKit wooden-handle kitchen tools with silicone heads on marble',
+                         sizes="(max-width: 1080px) 92vw, 46vw", eager=True,
+                         width=1920, height=1920)}
+          <div class="hero-tiles">
             {''.join(f'<a href="collections/{SET_META[k]["slug"]}.html"><b>{SETS[k]["count"]}</b><span data-i18n="set.{k}.short">{k}</span></a>' for k in ("L", "P", "S"))}
           </div>
-        </div>
+        </figure>
       </div>
     </div>
   </section>
@@ -422,6 +447,60 @@ def build_home():
             ('shield', 'about.v2.t', 'about.v2.d'),
             ('globe', 'about.v3.t', 'about.v3.d'),
             ('truck', 'about.v4.t', 'about.v4.d')))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--paper-2);border-top:1px solid var(--line)">
+    <div class="wrap-wide">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" data-i18n="about.eyebrow">About us</div>
+          <h2 class="h-display h2" data-i18n="gallery.title">Shot in our studio</h2>
+          <p data-i18n="gallery.sub">Every programme is photographed before it ships, so you know exactly what arrives in the carton.</p>
+        </div>
+        <a class="btn btn-ghost" href="collections.html"><span data-i18n="nav.catalog">Products</span> →</a>
+      </div>
+      <div class="shot-grid">
+        <figure class="shot shot-wide">
+          {cover_picture('p01', '', 'Wood-grain handle kitchen tool set', cls='', sizes='(max-width: 620px) 46vw, (max-width: 1080px) 30vw, 46vw', width=1920, height=960)}
+          <figcaption data-i18n="gallery.c1">Wood-grain handle programme</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p03', '', 'Coloured silicone spatulas and brushes', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c2">Silicone colour range</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p08', '', 'Stainless steel kitchen tool set', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c3">Stainless steel programme</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p09', '', 'Pizza cutters and pastry tools', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c4">Pizza &amp; pastry tools</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p10', '', 'Stainless steel turners and spatulas', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c5">Turners &amp; spatulas</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p11', '', 'Stainless steel peelers and zesters', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c6">Peelers &amp; zesters</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="photo-band">
+    {cover_picture('p04', '', 'SKit wooden-handle kitchen tools on a marble worktop', cls='photo-band-bg', sizes='100vw', width=1920, height=1080)}
+    <div class="wrap-wide">
+      <div class="photo-inner">
+        <div class="eyebrow" data-i18n="band.eyebrow">OEM &amp; private label</div>
+        <h2 class="h-display h2" data-i18n="band.title">Your brand, our factory floor</h2>
+        <p style="margin:16px 0 26px;font-size:16.5px" data-i18n="band.sub">Own-brand hang cards, colour boxes, gift sets and barcodes — produced to your artwork and market regulations, from one carton per item.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-accent btn-lg" href="contact.html" data-i18n="nav.quote">Request a quotation</a>
+          <a class="btn btn-lg" style="background:rgba(255,255,255,.14);color:#fff" href="collections.html" data-i18n="hero.cta1">Browse the catalogue</a>
+        </div>
       </div>
     </div>
   </section>
@@ -501,6 +580,20 @@ def build_collections_overview():
   <section class="section">
     <div class="wrap-wide"><div class="coll-grid">{cards}</div></div>
   </section>
+  <section class="photo-band">
+    {cover_picture('p12', '', 'SKit stainless steel whisks, strainers and kitchen tools', cls='photo-band-bg', sizes='100vw', width=1920, height=1080)}
+    <div class="wrap-wide">
+      <div class="photo-inner">
+        <div class="eyebrow" data-i18n="catalog.eyebrow">Catalogue</div>
+        <h2 class="h-display h2" data-i18n="overview.bandTitle">Not sure where to start?</h2>
+        <p style="margin:16px 0 26px;font-size:16.5px" data-i18n="overview.bandSub">Send us your market, target retail price and packing idea — we will shortlist the items that fit and return a costed offer with carton data.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-accent btn-lg" href="contact.html" data-i18n="nav.quote">Request a quotation</a>
+          <a class="btn btn-lg" style="background:rgba(255,255,255,.14);color:#fff" href="downloads.html" data-i18n="downloads.title">Price lists &amp; catalogues</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 {drawer_and_fab(rel)}
 {footer(rel)}"""
@@ -521,7 +614,9 @@ def build_collection(k):
     mat_line = " · ".join(x for x, _ in mat_counts.most_common(3))
     body = f"""{header('catalog', rel)}
 <main id="main">
-  <section class="page-head">
+  <section class="page-head has-photo">
+    {cover_picture(COVER_BY_SET[k], rel, s['title'] + ' — SKit kitchen tools', cls='photo-band-bg',
+                   sizes='100vw', eager=True, width=1920, height=1080)}
     <div class="wrap-wide">
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="{rel}index.html" data-i18n="nav.home">Home</a><span class="sep">/</span>
@@ -701,6 +796,22 @@ def build_product(p):
       <div class="rel-grid" id="relatedGrid"></div>
     </div>
   </section>
+
+  <section class="photo-band">
+    {cover_picture(COVER_BY_SET[k], rel, SETS[k]['title'] + ' — SKit kitchen tools', cls='photo-band-bg',
+                   sizes='100vw', width=1920, height=1080)}
+    <div class="wrap-wide">
+      <div class="photo-inner">
+        <div class="eyebrow" data-i18n="band.eyebrow">OEM &amp; private label</div>
+        <h2 class="h-display h2" data-i18n="product.askTitle">Need samples or a custom colour?</h2>
+        <p style="margin:16px 0 26px;font-size:16.5px" data-i18n="product.askSub">We produce OEM and private-label orders from 1 carton per item.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-accent btn-lg" href="{rel}contact.html" data-i18n="product.askCta">Talk to our export team</a>
+          <a class="btn btn-lg" style="background:rgba(255,255,255,.14);color:#fff" href="{m['slug']}.html" data-i18n="product.backTo">Back to collection</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 {drawer_and_fab(rel)}
 {footer(rel)}"""
@@ -733,7 +844,9 @@ def build_about():
     rel = ""
     body = f"""{header('about', rel)}
 <main id="main">
-  <section class="page-head">
+  <section class="page-head has-photo">
+    {cover_picture('p02', '', 'SKit silicone and stainless steel kitchen tools on marble', cls='photo-band-bg',
+                   sizes='100vw', eager=True, width=1920, height=1080)}
     <div class="wrap-wide">
       <nav class="breadcrumb"><a href="index.html" data-i18n="nav.home">Home</a><span class="sep">/</span><span data-i18n="nav.about">About us</span></nav>
       <h1 class="h-display h1" data-i18n="about.title">A kitchenware partner, not just a price list</h1>
@@ -756,9 +869,9 @@ def build_about():
         </div>
       </div>
       <div>
-        <div class="hero-card" style="box-shadow:var(--shadow-md)">
-          <img src="{SETS['L']['hero']}.jpg" alt="SKit kitchen tools" loading="lazy" width="1400" height="700">
-        </div>
+        <figure class="hero-photo" style="box-shadow:var(--shadow-md);min-height:0">
+          {cover_picture('p05', '', 'SKit silicone and stainless steel utensil set', sizes='(max-width: 1080px) 92vw, 45vw', width=1920, height=1920)}
+        </figure>
         <div class="hero-stats" style="margin-top:26px;border-top:0;padding-top:0">
           <div><div class="stat-n">{len(PRODUCTS)}</div><div class="stat-l" data-i18n="hero.stats.items">Quotable item lines</div></div>
           <div><div class="stat-n">3</div><div class="stat-l" data-i18n="hero.stats.sets">Product programmes</div></div>
@@ -783,6 +896,67 @@ def build_about():
         <div class="trust-item" style="background:#fff">{ICONS['phone']}<div><h4 data-i18n="contact.phone">Phone / WeChat</h4><p>+86 {PHONE1} · +86 {PHONE2}</p></div></div>
         <div class="trust-item" style="background:#fff">{ICONS['globe']}<div><h4 data-i18n="contact.market">Main markets</h4><p data-i18n="contact.marketV">Europe · Americas · Africa · Middle East · South-East Asia</p></div></div>
         <div class="trust-item" style="background:#fff">{ICONS['clock']}<div><h4 data-i18n="contact.hours">Working hours</h4><p data-i18n="contact.hoursV">Monday – Saturday, 08:30 – 18:00 (GMT+8)</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap-wide">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow" data-i18n="about.eyebrow">About us</div>
+          <h2 class="h-display h2" data-i18n="gallery.title">Shot in our studio</h2>
+          <p data-i18n="gallery.sub">Every programme is photographed before it ships, so you know exactly what arrives in the carton.</p>
+        </div>
+      </div>
+      <div class="shot-grid">
+        <figure class="shot">
+          {cover_picture('p04', '', 'SKit wood-handle kitchen tool set', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c1">Wood-grain handle programme</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p06', '', 'SKit wood-handle silicone utensils', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c7">Wood handle &amp; silicone</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p03', '', 'Coloured silicone spatulas and brushes', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c2">Silicone colour range</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p07', '', 'Stainless steel box graters', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c8">Graters &amp; slicers</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p12', '', 'Stainless steel whisks and strainers', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c9">Whisks &amp; strainers</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p10', '', 'Stainless steel turners and spatulas', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c5">Turners &amp; spatulas</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p11', '', 'Stainless steel peelers and zesters', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c6">Peelers &amp; zesters</figcaption>
+        </figure>
+        <figure class="shot">
+          {cover_picture('p09', '', 'Pizza cutters and pastry tools', sizes='(max-width: 1080px) 30vw, 23vw')}
+          <figcaption data-i18n="gallery.c4">Pizza &amp; pastry tools</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="photo-band">
+    {cover_picture('p08', '', 'SKit stainless steel kitchen tool programme', cls='photo-band-bg', sizes='100vw', width=1920, height=1080)}
+    <div class="wrap-wide">
+      <div class="photo-inner">
+        <div class="eyebrow" data-i18n="band.eyebrow">OEM &amp; private label</div>
+        <h2 class="h-display h2" data-i18n="about.cta">See what we can produce for you</h2>
+        <p style="margin:16px 0 26px;font-size:16.5px" data-i18n="about.p2">We produce and source complete kitchen tool programmes.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-accent btn-lg" href="contact.html" data-i18n="nav.quote">Request a quotation</a>
+          <a class="btn btn-lg" style="background:rgba(255,255,255,.14);color:#fff" href="collections.html" data-i18n="hero.cta1">Browse the catalogue</a>
+        </div>
       </div>
     </div>
   </section>

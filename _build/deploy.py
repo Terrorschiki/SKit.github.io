@@ -53,17 +53,28 @@ def copy_tree(src, dst):
 
 
 def prune_published_root():
-    """Remove stale published output from the repository root.
+    """Remove stale *published* output from the repository root.
 
-    Only stale *published* output is considered: the original supplier
-    workbooks (source data for the whole build) and the tooling directories are
-    never touched, whatever their names.
+    Safety rule: only remove a top-level entry that this publisher itself
+    produced and would reproduce — a published directory, a published file, or
+    a file that is currently in site/ waiting to be published. Anything else
+    (source data, the photo originals, notes, tooling) is left untouched, so an
+    unrelated folder can never be destroyed by a rebuild.
     """
+    produced = set(PUBLISH_DIRS) | set(PUBLISH_FILES) | set(GENERATED)
     removed = []
     for name in os.listdir(ROOT):
-        if name in KEEP_TOP or name.endswith((".xlsx", ".pdf")):
+        if name in KEEP_TOP:
             continue
         path = os.path.join(ROOT, name)
+        # only touch entries we publish now, or published leftovers we can
+        # positively identify as generated output
+        publishable = name in produced or os.path.exists(os.path.join(SITE, name))
+        if not publishable:
+            continue
+        # never remove something that a *different* source folder owns
+        if name in {".git", ".github", ".gitignore", "_build", "site"}:
+            continue
         if os.path.isdir(path):
             shutil.rmtree(path)
         else:
@@ -140,14 +151,20 @@ def main():
     missing_pages = [p["id"] for p in cat["products"]
                      if not os.path.exists(os.path.join(ROOT, "products", p["id"] + ".html"))]
 
+    # count only what the web server actually serves
     files = size = 0
-    for r, ds, fs in os.walk(ROOT):
-        parts = r.split(os.sep)
-        if ".git" in parts or "_build" in parts or "site" in parts:
-            continue
-        for f in fs:
+    published_paths = [os.path.join(ROOT, d) for d in PUBLISH_DIRS]
+    published_paths += [os.path.join(ROOT, f) for f in PUBLISH_FILES]
+    published_paths += [os.path.join(ROOT, f) for f in GENERATED]
+    for path in published_paths:
+        if os.path.isfile(path):
             files += 1
-            size += os.path.getsize(os.path.join(r, f))
+            size += os.path.getsize(path)
+            continue
+        for r, ds, fs in os.walk(path):
+            for f in fs:
+                files += 1
+                size += os.path.getsize(os.path.join(r, f))
 
     print(f"\npublished: {files} files, {size/1048576:.1f} MB")
     print(f"products: {len(cat['products'])}  "

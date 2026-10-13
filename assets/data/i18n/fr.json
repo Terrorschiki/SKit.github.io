@@ -185,5 +185,21 @@
   "cat.bakery": "Pâtisserie et boulangerie",
   "cat.serve": "Service et barbecue",
   "cat.storage": "Rangement et préparation",
-  "cat.utensils": "Ustensiles de cuisine"
+  "cat.utensils": "Ustensiles de cuisine",
+  "gallery.title": "Photographié dans notre studio",
+  "gallery.sub": "Chaque programme est photographié avant expédition, pour que vous sachiez exactement ce qui arrive dans le carton.",
+  "gallery.c1": "Programme manche veiné bois",
+  "gallery.c2": "Gamme de couleurs silicone",
+  "gallery.c3": "Programme en acier inoxydable",
+  "gallery.c4": "Outils à pizza et pâtisserie",
+  "gallery.c5": "Truelles et spatules",
+  "gallery.c6": "Éplucheurs et zesteurs",
+  "gallery.c7": "Manche bois et silicone",
+  "gallery.c8": "Râpes et trancheuses",
+  "gallery.c9": "Fouets et passoires",
+  "band.eyebrow": "OEM et marque privée",
+  "band.title": "Votre marque, notre atelier",
+  "band.sub": "Cartes de marque, boîtes couleur, coffrets et codes-barres réalisés selon vos visuels et la réglementation de votre marché, dès un carton par article.",
+  "overview.bandTitle": "Vous ne savez pas par où commencer ?",
+  "overview.bandSub": "Envoyez-nous votre marché, votre prix de vente cible et votre idée d’emballage : nous présélectionnons les articles adaptés et revenons avec une offre chiffrée et les données de carton."
 }

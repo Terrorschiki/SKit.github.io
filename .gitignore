@@ -11,14 +11,17 @@ _build/shots/
 _build/diag_overflow.ps1
 **/_diagdir/
 
-# Intermediate build output (dist/ is the published tree)
+# Build staging tree (the published copy lives at the repository root)
 site/
 
-# Original supplier price lists (large; the published copies live in dist/downloads/)
+# Source material — build inputs, not part of the published site.
+# The original supplier price lists (published copies live in downloads/).
 *.xlsx
 *.pdf
-!dist/downloads/*.xlsx
-!dist/downloads/*.pdf
+!downloads/*.xlsx
+!downloads/*.pdf
+# The studio cover photographs (published as assets/img/cover/*)
+网站封面图片/
 
 # Editor / OS noise
 .vscode/
