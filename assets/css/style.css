@@ -105,22 +105,19 @@ p { margin: 0 0 1em; }
   height: var(--header-h);
   display: flex; align-items: center; gap: 26px;
 }
-.brand { display: flex; align-items: center; gap: 11px; flex: none; }
-.brand-mark {
-  width: 38px; height: 38px; border-radius: 11px; flex: none;
-  background: linear-gradient(145deg, var(--ink) 0%, #24405c 100%);
-  color: #fff; display: grid; place-items: center;
-  font-family: var(--font-serif); font-size: 19px; font-weight: 700;
-  box-shadow: var(--shadow-sm);
-  position: relative; overflow: hidden;
-}
-.brand-mark::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.28) 50%, transparent 60%);
-}
+.brand { display: flex; align-items: center; gap: 10px; flex: none; }
+
+/* Registered SKit wordmark, extracted from the trademark registration PDF */
+.brand-logo { height: 29px; width: auto; flex: none; }
+.brand-logo-white { height: 32px; }
+.site-footer .brand { gap: 0; }
+
 .brand-text { display: flex; flex-direction: column; line-height: 1.06; }
 .brand-name { font-weight: 700; font-size: 17px; letter-spacing: -.02em; }
-.brand-tag { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.brand-tag {
+  font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+  max-width: 185px; line-height: 1.5;
+}
 
 .nav { display: flex; align-items: center; gap: 3px; margin-left: 8px; }
 .nav a {
@@ -772,6 +769,7 @@ select.sel:focus { outline: none; border-color: #b9c5d2; box-shadow: 0 0 0 3.5px
   .form-grid { grid-template-columns: 1fr; }
   .sec-head { margin-bottom: 28px; }
   .brand-tag { display: none; }
+  .brand-logo { height: 26px; }
   .shot-grid { grid-template-columns: repeat(2, 1fr); }
   .shot-wide { grid-column: span 2; aspect-ratio: 16 / 9; }
   .photo-band .photo-inner { padding: 54px 0; }

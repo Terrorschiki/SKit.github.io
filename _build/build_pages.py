@@ -113,8 +113,9 @@ def head(title, desc, rel, canonical, extra_css="", og_img=None, og_type="websit
   <meta property="og:url" content="{canonical}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#0e1c2b">
-  <link rel="icon" href="{rel}assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="{rel}assets/img/favicon.svg">
+  <link rel="icon" href="{rel}assets/img/brand/skit-favicon-32.png" sizes="32x32">
+  <link rel="icon" href="{rel}assets/img/brand/skit-logo-512.png" sizes="512x512">
+  <link rel="apple-touch-icon" href="{rel}assets/img/brand/skit-favicon-180.png">
   {css}
   <script>window.SKIT_BASE = "{rel}";</script>
   <script>window.addEventListener('error',function(e){{var m='[SKit] '+(e.message||'')+' @ '+(e.filename||'')+':'+(e.lineno||'');if(window.console)console.error(m);}});</script>
@@ -131,11 +132,10 @@ def header(active, rel, body_attrs=""):
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="brand" href="{rel}index.html" aria-label="SKit Kitchenware — home">
-      <span class="brand-mark">S</span>
-      <span class="brand-text">
-        <span class="brand-name">SKit</span>
-        <span class="brand-tag" data-i18n="meta.tagline">Kitchen tools manufacturer &amp; exporter</span>
-      </span>
+      <img class="brand-logo" src="{rel}assets/img/brand/skit-logo.webp"
+           srcset="{rel}assets/img/brand/skit-logo.webp 1x" width="1200" height="556"
+           alt="SKit" fetchpriority="high" decoding="async">
+      <span class="brand-tag" data-i18n="meta.tagline">Kitchen tools manufacturer &amp; exporter</span>
     </a>
     <nav class="nav" aria-label="Main">
       <a href="{rel}index.html"{' class="active"' if active == 'home' else ''} data-i18n="nav.home">Home</a>
@@ -191,9 +191,8 @@ def footer(rel):
     <div class="footer-grid">
       <div>
         <div class="brand">
-          <span class="brand-mark">S</span>
-          <span class="brand-text"><span class="brand-name">SKit</span>
-          <span class="brand-tag" data-i18n="meta.tagline">Kitchen tools manufacturer</span></span>
+          <img class="brand-logo brand-logo-white" src="{rel}assets/img/brand/skit-logo-white.webp"
+               width="1200" height="556" alt="SKit" loading="lazy" decoding="async">
         </div>
         <p class="footer-about" data-i18n="footer.about">Kitchen tool manufacturer and exporter.</p>
       </div>
@@ -1192,25 +1191,74 @@ def build_favicon():
 
 
 def build_og_cover():
-    """Simple branded OG cover built from a hero photo + ink band."""
+    """Social share card: a studio photo collage, the registered wordmark and a tagline.
+
+    1200x630 is the size that Facebook, LinkedIn, X and WhatsApp all render well.
+    """
     try:
-        from PIL import Image, ImageDraw
+        from PIL import Image, ImageDraw, ImageFont
     except Exception:
         return
-    src = os.path.join(SITE, SETS["S"]["hero"] + ".jpg")
-    out = os.path.join(SITE, "assets", "img", "og-cover.jpg")
-    if not os.path.exists(src):
-        return
     W, H = 1200, 630
-    im = Image.open(src).convert("RGB")
-    im.thumbnail((W, H), Image.LANCZOS)
-    canvas = Image.new("RGB", (W, H), "#f8f9fb")
-    canvas.paste(im, ((W - im.size[0]) // 2, (H - im.size[1]) // 2))
+    INK = (14, 28, 43)
+    band_h = 150
+    body_h = H - band_h
+
+    canvas = Image.new("RGB", (W, H), INK)
+
+    # ---- collage of three studio shots across the body area -----------------
+    collage = [(ROOT_PHOTO := "p06", 0.42), ("p04", 0.29), ("p08", 0.29)]
+    x = 0
+    for i, (stem, share) in enumerate(collage):
+        cw = W - x if i == len(collage) - 1 else int(W * share)
+        path = os.path.join(SITE, "assets", "img", "cover", f"{stem}-960.jpg")
+        if os.path.exists(path):
+            tile = Image.open(path).convert("RGB")
+            # cover-fit into cw x body_h
+            scale = max(cw / tile.size[0], body_h / tile.size[1])
+            tile = tile.resize((max(1, int(tile.size[0] * scale)),
+                                max(1, int(tile.size[1] * scale))), Image.LANCZOS)
+            left = (tile.size[0] - cw) // 2
+            top = (tile.size[1] - body_h) // 3          # favour the upper third
+            canvas.paste(tile.crop((left, top, left + cw, top + body_h)), (x, 0))
+        x += cw
+
+    # soft dark wash so the wordmark and text always read
+    wash = Image.new("RGBA", (W, body_h), (8, 15, 23, 96))
+    canvas.paste(Image.alpha_composite(
+        canvas.crop((0, 0, W, body_h)).convert("RGBA"), wash).convert("RGB"), (0, 0))
+
+    # ---- ink band with the wordmark ----------------------------------------
     d = ImageDraw.Draw(canvas, "RGBA")
-    d.rectangle([0, 0, W, 96], fill=(14, 28, 43, 255))
-    d.rectangle([0, H - 56, W, H], fill=(14, 28, 43, 255))
+    d.rectangle([0, body_h, W, H], fill=INK + (255,))
+    d.rectangle([0, body_h, W, body_h + 3], fill=(180, 85, 42, 255))   # copper rule
+
+    logo_path = os.path.join(SITE, "assets", "img", "brand", "skit-logo-white.png")
+    if os.path.exists(logo_path):
+        # the white silhouette is the legible treatment on the ink band
+        logo = Image.open(logo_path).convert("RGBA")
+        lh = 62
+        lw = max(1, int(logo.size[0] * lh / logo.size[1]))
+        logo = logo.resize((lw, lh), Image.LANCZOS)
+        canvas.paste(logo, (56, body_h + (band_h - lh) // 2 - 6), logo)
+
+        # tagline to the right of the wordmark
+        font = None
+        for cand in (r"C:\Windows\Fonts\segoeuib.ttf", r"C:\Windows\Fonts\arialbd.ttf",
+                     r"C:\Windows\Fonts\segoeui.ttf", r"C:\Windows\Fonts\arial.ttf"):
+            if os.path.exists(cand):
+                try:
+                    font = ImageFont.truetype(cand, 26)
+                    break
+                except Exception:
+                    pass
+        if font:
+            d.text((lw + 92, body_h + 56), "Kitchen tools manufacturer & exporter",
+                   font=font, fill=(214, 224, 235, 255))
+
     try:
-        canvas.save(out, "JPEG", quality=86, optimize=True)
+        canvas.save(os.path.join(SITE, "assets", "img", "og-cover.jpg"),
+                    "JPEG", quality=88, optimize=True, progressive=True)
     except Exception:
         pass
 

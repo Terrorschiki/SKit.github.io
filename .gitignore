@@ -8,6 +8,7 @@ venv/
 _build/raw/
 _build/peek/
 _build/shots/
+_build/tm/
 _build/diag_overflow.ps1
 **/_diagdir/
 
