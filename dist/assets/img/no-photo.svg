@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 390" role="img" aria-label="Photograph coming soon">
+  <rect width="520" height="390" fill="#f6f8fa"/>
+  <g fill="none" stroke="#c7d2dc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M196 168v-16a64 64 0 0 1 128 0v16"/>
+    <path d="M182 168h156l-14 118a20 20 0 0 1-20 18H216a20 20 0 0 1-20-18z"/>
+  </g>
+  <g stroke="#b4552a" stroke-width="6" stroke-linecap="round">
+    <path d="M120 96v28M106 110h28"/>
+  </g>
+  <text x="260" y="338" text-anchor="middle" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="19" font-weight="600" fill="#8496a8" letter-spacing="0.04em">PHOTO ON REQUEST</text>
+</svg>

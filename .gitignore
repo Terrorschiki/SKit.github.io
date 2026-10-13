@@ -1,0 +1,28 @@
+# Build environment
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Working data extracted from the supplier workbooks and local QA output
+_build/raw/
+_build/peek/
+_build/shots/
+_build/diag_overflow.ps1
+**/_diagdir/
+
+# Intermediate build output (dist/ is the published tree)
+site/
+
+# Original supplier price lists (large; the published copies live in dist/downloads/)
+*.xlsx
+*.pdf
+!dist/downloads/*.xlsx
+!dist/downloads/*.pdf
+
+# Editor / OS noise
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+*.lnk
