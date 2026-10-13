@@ -23,6 +23,10 @@ site/
 # The studio cover photographs (published as assets/img/cover/*)
 网站封面图片/
 
+# Working notes. The repository root is also the published site root, so these
+# must stay out of the repo; _build/NOTES.md is the tracked copy.
+skills.md
+
 # Editor / OS noise
 .vscode/
 .idea/
